@@ -9,31 +9,31 @@ var http = require('http');
 
 const dotenv = require('dotenv');
 const mongoose = require("mongoose");
+
+/**
+ * Load environment variables from .env file.
+ */
+dotenv.config();
+
 /**
  * Get port from environment and store in Express.
  */
-dotenv.config()
-
-
-
 const port = normalizePort(process.env.PORT || '3001');
 app.set('port', port);
 
-const mongo = normalizePort(process.env.MONGO_DB);
-app.set('mongo', mongo);
-
-
+/**
+ * MongoDB connection string.
+ */
+const mongo = process.env.MONGO_DB;
 
 /**
  * Create HTTP server.
  */
-
 var server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
-
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
@@ -41,17 +41,14 @@ server.on('listening', onListening);
 /**
  * Normalize a port into a number, string, or false.
  */
-
 function normalizePort(val) {
   var port = parseInt(val, 10);
 
   if (isNaN(port)) {
-    // named pipe
     return val;
   }
 
   if (port >= 0) {
-    // port number
     return port;
   }
 
@@ -61,7 +58,6 @@ function normalizePort(val) {
 /**
  * Event listener for HTTP server "error" event.
  */
-
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
@@ -71,7 +67,6 @@ function onError(error) {
     ? 'Pipe ' + port
     : 'Port ' + port;
 
-  // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
@@ -89,24 +84,19 @@ function onError(error) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-
 function onListening() {
-
-  mongoose.connect(`${mongo}`)
+  mongoose.connect(mongo)
     .then(() => {
-      console.log('Connect Db success!')
+      console.log('Connected to MongoDB');
     })
-
     .catch((err) => {
-      console.log("error:" + err)
-    })
+      console.error('Error connecting to MongoDB:', err);
+    });
 
   var addr = server.address();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
-  console.log('Server is running in port: ', + port)
+  console.log('Server is running in port:', port);
 }
-
-
