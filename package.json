@@ -2,7 +2,9 @@
   "name": "portfolio-backend",
   "version": "1.0.0",
   "private": true,
+  "main": "www.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --watch src/bin/www.js"
   },
   "dependencies": {
