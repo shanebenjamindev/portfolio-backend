@@ -1,5 +1,4 @@
 const User = require("../models/UserModel")
-const bcrypt = require("bcrypt")
 const { genneralAccessToken, genneralRefreshToken } = require("./JwtService")
 
 const createUser = (newUser) => {
@@ -15,12 +14,11 @@ const createUser = (newUser) => {
                     message: 'The email is already'
                 })
             }
-            const hash = bcrypt.hashSync(password, 10)
 
             const createdUser = await User.create({
                 name,
                 email,
-                password: hash,
+                password,
                 phone
             })
             if (createdUser) {
@@ -49,7 +47,7 @@ const loginUser = (userLogin) => {
                     message: 'The user is not defined'
                 })
             }
-            const comparePassword = bcrypt.compareSync(password, checkUser.password)
+            const comparePassword = compareSync(password, checkUser.password)
 
             if (!comparePassword) {
                 resolve({
@@ -92,16 +90,12 @@ const updateUser = (id, data) => {
                     message: 'The user is not defined'
                 })
             }
-            
-            if (data.password) {
-                data.password = bcrypt.hashSync(data.password, 10);
-            }
 
             const updatedUser = await User.findByIdAndUpdate(id, data, { new: true })
             resolve({
                 status: 'OK',
                 message: 'SUCCESS',
-                data: updatedUser, 
+                data: updatedUser,
             })
         } catch (e) {
             reject(e)
